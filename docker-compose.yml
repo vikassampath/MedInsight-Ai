@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: medinsight
+      POSTGRES_USER: medinsight
+      POSTGRES_PASSWORD: medinsight_local
+    ports:
+      - "5432:5432"
+    volumes:
+      - medinsight_pgdata:/var/lib/postgresql/data
+
+volumes:
+  medinsight_pgdata:
