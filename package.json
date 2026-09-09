@@ -4,10 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node node_modules/vite/bin/vite.js",
-    "build": "node -e \"const { spawnSync } = require('node:child_process'); const run = (file, args) => spawnSync(process.execPath, [file, ...args], { stdio: 'inherit' }).status ?? 1; const typecheck = run('node_modules/typescript/bin/tsc', ['-b']); process.exit(typecheck || run('node_modules/vite/bin/vite.js', ['build']));\"",
-    "lint": "node node_modules/oxlint/bin/oxlint",
-    "preview": "node node_modules/vite/bin/vite.js preview"
+    "dev": "node_modules/.bin/vite.cmd",
+    "build": "npm run typecheck && node_modules/.bin/vite.cmd build",
+    "typecheck": "node_modules/.bin/tsc.cmd -b",
+    "lint": "node_modules/.bin/oxlint.cmd",
+    "preview": "node_modules/.bin/vite.cmd preview"
   },
   "dependencies": {
     "lucide-react": "^1.42.0",
