@@ -1,11 +1,5 @@
 # MedInsight AI
 
-<p align="center">
-	<a href="https://github.com/vikassampath/MedInsight-Ai">
-		<img src="https://raw.githubusercontent.com/beingvicky/beingvicky/main/dist/github-jet.svg" alt="Rocket ship contribution graph" width="100%" />
-	</a>
-</p>
-
 MedInsight AI is a full-stack starter for an intelligent medical report and imaging assistant. The current slice is a frontend dashboard with demo health measurements, report history, a report upload interaction, a knowledge assistant interaction, and an always-visible safety layer.
 
 ## Current scope
@@ -17,10 +11,6 @@ MedInsight AI is a full-stack starter for an intelligent medical report and imag
 - Responsive layout for desktop and narrow screens
 
 The displayed measurements and assistant answer are demo data. No uploaded file is transmitted or analyzed yet.
-
-## Contribution activity
-
-The rocket map above is generated from the project's GitHub contribution activity and refreshed automatically by the repository workflow.
 
 ![Continuous integration](https://github.com/vikassampath/MedInsight-Ai/actions/workflows/ci.yml/badge.svg)
 
