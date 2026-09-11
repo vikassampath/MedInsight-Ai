@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node_modules/.bin/vite.cmd",
-    "build": "npm run typecheck && node_modules/.bin/vite.cmd build",
-    "typecheck": "node_modules/.bin/tsc.cmd -b",
-    "lint": "node_modules/.bin/oxlint.cmd",
-    "preview": "node_modules/.bin/vite.cmd preview"
+    "dev": "vite",
+    "build": "npm run typecheck && vite build",
+    "typecheck": "tsc -b",
+    "lint": "oxlint",
+    "preview": "vite preview"
   },
   "dependencies": {
     "lucide-react": "^1.42.0",
