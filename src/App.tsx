@@ -23,6 +23,7 @@ function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploadError, setUploadError] = useState('')
   const [uploadComplete, setUploadComplete] = useState(false)
+  const displayDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(new Date()).toUpperCase()
   const answer = question.toLowerCase().includes('ldl')
     ? 'LDL is a type of cholesterol that can contribute to plaque buildup in arteries when levels stay high.'
     : question.toLowerCase().includes('hemoglobin')
@@ -84,7 +85,7 @@ function App() {
     <main className="main-content">
       <header className="topbar"><div className="crumbs"><span>Workspace</span><span>/</span><strong>{activeNav}</strong></div><div className="top-actions"><button className="icon-button" aria-label="Search"><Search size={19} /></button><button className="icon-button" aria-label="Notifications"><Bell size={19} /><i /></button><div className="avatar">MI</div></div></header>
       <div className={`content-wrap ${activeSection ? 'section-mode' : ''}`}>
-        <section className="welcome-row"><div><p className="eyebrow">MONDAY, SEPTEMBER 07, 2026</p><h1>{activeSection ? activeSection.title : 'Good morning'} <span>✦</span></h1><p className="lede">{activeSection?.description || 'A clear view of your health, with context you can understand.'}</p></div><button className="primary-button" onClick={() => setShowUpload(true)}><Upload size={17} /> Upload a report</button></section>
+        <section className="welcome-row"><div><p className="eyebrow">{displayDate}</p><h1>{activeSection ? activeSection.title : 'Good morning'} <span>✦</span></h1><p className="lede">{activeSection?.description || 'A clear view of your health, with context you can understand.'}</p></div><button className="primary-button" onClick={() => setShowUpload(true)}><Upload size={17} /> Upload a report</button></section>
         {activeSection && <section className="section-placeholder"><div className="placeholder-icon"><Activity size={22} /></div><h2>{activeSection.title} is ready for your workspace</h2><p>{activeSection.description}</p><button className="primary-button" onClick={() => setActiveNav('Overview')}>Back to overview</button></section>}
         <section className="notice"><div className="notice-icon"><ShieldCheck size={20} /></div><div><strong>Your health information stays yours.</strong><p>MedInsight provides educational context, not a medical diagnosis. Always discuss results with your care team.</p></div><button aria-label="More safety information"><ArrowUpRight size={18} /></button></section>
         <div className="section-heading"><div><h2>Your health snapshot</h2><p>Latest values across your recent reports</p></div><button className="text-button" onClick={() => setActiveNav('Reports')}>View history <ArrowUpRight size={16} /></button></div>
