@@ -17,3 +17,17 @@ def test_health_returns_service_status_and_timestamp() -> None:
     assert payload["service"] == "medinsight-api"
     datetime.fromisoformat(payload["timestamp"].replace("Z", "+00:00"))
     assert "not a diagnosis" in payload["safety_notice"].lower()
+
+
+def test_health_allows_configured_frontend_origin() -> None:
+    response = client.options(
+        "/api/health",
+        headers={
+            "Origin": "http://localhost:5173",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == "http://localhost:5173"
+    assert response.headers["access-control-allow-methods"] == "GET"
