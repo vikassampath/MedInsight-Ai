@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Activity, ArrowUpRight, Bell, BookOpen, ChevronDown, FileText, ImagePlus, LayoutDashboard, MessageCircleQuestion, MoreHorizontal, Search, ShieldCheck, Sparkles, Upload, UsersRound } from 'lucide-react'
+import { formatDisplayDate, getAssistantAnswer, MAX_UPLOAD_SIZE_BYTES, sectionDetails } from './appLogic'
 import './App.css'
 
 const navItems = [
@@ -23,12 +24,8 @@ function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploadError, setUploadError] = useState('')
   const [uploadComplete, setUploadComplete] = useState(false)
-  const displayDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(new Date()).toUpperCase()
-  const answer = question.toLowerCase().includes('ldl')
-    ? 'LDL is a type of cholesterol that can contribute to plaque buildup in arteries when levels stay high.'
-    : question.toLowerCase().includes('hemoglobin')
-      ? 'Hemoglobin is a protein in red blood cells that carries oxygen through your body.'
-      : 'Ask about a health term or result and MedInsight will provide educational context.'
+  const displayDate = formatDisplayDate(new Date())
+  const answer = getAssistantAnswer(question)
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -36,7 +33,7 @@ function App() {
     setSelectedFile(null)
     setUploadComplete(false)
     if (!file) return
-    if (file.size > 20 * 1024 * 1024) {
+    if (file.size > MAX_UPLOAD_SIZE_BYTES) {
       setUploadError('That file is larger than 20 MB. Choose a smaller file.')
       return
     }
@@ -67,12 +64,6 @@ function App() {
     setUploadComplete(true)
   }
 
-  const sectionDetails: Record<string, { title: string; description: string }> = {
-    Reports: { title: 'Your reports', description: 'Review uploaded reports and their analysis status.' },
-    Imaging: { title: 'Your imaging', description: 'Keep imaging studies and processing updates in one place.' },
-    Knowledge: { title: 'Knowledge assistant', description: 'Explore plain-language context for health terms and results.' },
-    Patients: { title: 'Your patients', description: 'Patient history will appear here when connected to a workspace.' },
-  }
   const activeSection = sectionDetails[activeNav]
 
   return <div className="app-shell">
