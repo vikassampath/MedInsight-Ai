@@ -32,6 +32,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Test
+        run: npm run test -- --reporter=dot
+
       - name: Build
         run: npm run build
 
@@ -54,3 +57,6 @@ jobs:
 
       - name: Compile backend
         run: python -m compileall -q backend
+
+      - name: Test backend
+        run: python -m pytest backend/tests -q

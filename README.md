@@ -34,6 +34,18 @@ uvicorn backend.app.main:app --reload --port 8000
 
 Health check: `http://localhost:8000/api/health`
 
+To configure CORS for a deployed frontend, set `MEDINSIGHT_ALLOWED_ORIGINS` to a comma-separated list of allowed origins. Copy `.env.example` to `.env` before starting the local PostgreSQL service and replace the sample password when sharing the environment.
+
+## Run checks
+
+```powershell
+npm run test
+python -m pytest backend/tests -q
+npm run typecheck
+npm run lint
+npm run build
+```
+
 ## Start PostgreSQL with pgvector
 
 ```powershell
