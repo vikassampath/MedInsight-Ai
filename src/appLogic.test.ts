@@ -1,9 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import { formatDisplayDate, getAssistantAnswer, isSupportedReportFile, MAX_UPLOAD_SIZE_BYTES, sectionDetails } from './appLogic'
+import { formatDisplayDate, getAssistantAnswer, getGreeting, isSupportedReportFile, MAX_UPLOAD_SIZE_BYTES, sectionDetails } from './appLogic'
 
 describe('app logic', () => {
   it('formats a deterministic display date', () => {
     expect(formatDisplayDate(new Date('2026-09-07T12:00:00Z'))).toBe('MONDAY, SEPTEMBER 07, 2026')
+  })
+
+  it('uses a greeting that matches the local time', () => {
+    expect(getGreeting(new Date(2026, 8, 7, 9))).toBe('Good morning')
+    expect(getGreeting(new Date(2026, 8, 7, 12))).toBe('Good afternoon')
+    expect(getGreeting(new Date(2026, 8, 7, 17))).toBe('Good evening')
   })
 
   it('returns targeted educational answers', () => {

@@ -27,6 +27,13 @@ export function formatDisplayDate(date: Date): string {
   }).format(date).toUpperCase()
 }
 
+export function getGreeting(date: Date): string {
+  const hour = date.getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 17) return 'Good afternoon'
+  return 'Good evening'
+}
+
 export function getAssistantAnswer(question: string): string {
   const normalizedQuestion = question.toLowerCase()
   if (normalizedQuestion.includes('ldl')) {
