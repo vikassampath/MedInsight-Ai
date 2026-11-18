@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Activity, ArrowUpRight, Bell, BookOpen, ChevronDown, FileText, ImagePlus, LayoutDashboard, MessageCircleQuestion, MoreHorizontal, Search, ShieldCheck, Sparkles, Upload, UsersRound } from 'lucide-react'
-import { formatDisplayDate, getAssistantAnswer, MAX_UPLOAD_SIZE_BYTES, sectionDetails } from './appLogic'
+import { ACCEPTED_REPORT_TYPES, formatDisplayDate, getAssistantAnswer, isSupportedReportFile, MAX_UPLOAD_SIZE_BYTES, sectionDetails } from './appLogic'
 import './App.css'
 
 const navItems = [
@@ -24,11 +24,10 @@ function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploadError, setUploadError] = useState('')
   const [uploadComplete, setUploadComplete] = useState(false)
-  const displayDate = formatDisplayDate(new Date())
+  const [displayDate] = useState(() => formatDisplayDate(new Date()))
   const answer = getAssistantAnswer(question)
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+  const handleFile = (file: File | undefined) => {
     setUploadError('')
     setSelectedFile(null)
     setUploadComplete(false)
@@ -37,24 +36,38 @@ function App() {
       setUploadError('That file is larger than 20 MB. Choose a smaller file.')
       return
     }
+    if (!file.size) {
+      setUploadError('That file is empty. Choose another file.')
+      return
+    }
+    if (!isSupportedReportFile(file)) {
+      setUploadError('Choose a PDF, JPG, or PNG image.')
+      return
+    }
     setSelectedFile(file)
   }
 
-  useEffect(() => {
-    if (!showUpload) return
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setShowUpload(false)
-    }
-    window.addEventListener('keydown', handleEscape)
-    return () => window.removeEventListener('keydown', handleEscape)
-  }, [showUpload])
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => handleFile(event.target.files?.[0])
+  const handleFileDrop = (event: React.DragEvent<HTMLLabelElement>) => {
+    event.preventDefault()
+    handleFile(event.dataTransfer.files[0])
+  }
 
-  const closeUpload = () => {
+  const closeUpload = useCallback(() => {
     setShowUpload(false)
     setSelectedFile(null)
     setUploadError('')
     setUploadComplete(false)
-  }
+  }, [])
+
+  useEffect(() => {
+    if (!showUpload) return
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeUpload()
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [showUpload, closeUpload])
 
   const handleUpload = () => {
     if (!selectedFile) {
@@ -70,7 +83,7 @@ function App() {
     <aside className="sidebar">
       <div className="brand"><span className="brand-mark"><Activity size={18} /></span><span>medinsight<span className="brand-dot">.</span></span></div>
       <div className="workspace-switcher"><span className="avatar small">MI</span><span><strong>My workspace</strong><small>Personal workspace</small></span><ChevronDown size={15} /></div>
-      <nav className="main-nav" aria-label="Main navigation"><p className="nav-label">Workspace</p>{navItems.map(({ label, icon: Icon, badge }) => <button key={label} className={`nav-item ${activeNav === label ? 'active' : ''}`} onClick={() => setActiveNav(label)}><Icon size={18} /><span>{label}</span>{badge && <em>{badge}</em>}</button>)}</nav>
+      <nav className="main-nav" aria-label="Main navigation"><p className="nav-label">Workspace</p>{navItems.map(({ label, icon: Icon, badge }) => <button key={label} aria-label={label} aria-current={activeNav === label ? 'page' : undefined} className={`nav-item ${activeNav === label ? 'active' : ''}`} onClick={() => setActiveNav(label)}><Icon size={18} /><span>{label}</span>{badge && <em>{badge}</em>}</button>)}</nav>
       <div className="sidebar-bottom"><button className="nav-item"><ShieldCheck size={18} /><span>Privacy & safety</span></button><div className="safety-mini"><span className="pulse-dot" /><span><strong>Safety layer active</strong><small>Information, not diagnosis</small></span></div></div>
     </aside>
     <main className="main-content">
@@ -87,7 +100,7 @@ function App() {
         </>}
       </div>
     </main>
-    {showUpload && <div className="modal-backdrop" onClick={closeUpload}><div className="upload-modal" role="dialog" aria-modal="true" aria-labelledby="upload-title" onClick={(event) => event.stopPropagation()}><button className="close-button" aria-label="Close upload dialog" onClick={closeUpload}>×</button><div className="upload-symbol"><Upload size={24} /></div><h2 id="upload-title">Upload a health report</h2><p>Drop a PDF or image here to extract values and compare them with the lab's own reference ranges.</p><label className="drop-zone"><input type="file" accept=".pdf,image/*" onChange={handleFileChange} /><FileText size={24} /><strong>{selectedFile ? selectedFile.name : 'Choose a file'}</strong><span className={uploadError ? 'upload-error' : ''}>{uploadError || 'PDF, JPG, or PNG up to 20 MB'}</span></label><button className="upload-submit" type="button" onClick={handleUpload}>{uploadComplete ? 'Added to reports' : 'Add report'}</button><small className="modal-note"><ShieldCheck size={14} /> Demo mode: files are not sent anywhere yet.</small></div></div>}
+    {showUpload && <div className="modal-backdrop" onClick={closeUpload}><div className="upload-modal" role="dialog" aria-modal="true" aria-labelledby="upload-title" onClick={(event) => event.stopPropagation()}><button className="close-button" aria-label="Close upload dialog" onClick={closeUpload}>×</button><div className="upload-symbol"><Upload size={24} /></div><h2 id="upload-title">Upload a health report</h2><p>Drop a PDF or image here to extract values and compare them with the lab's own reference ranges.</p><label className="drop-zone" onDragOver={(event) => event.preventDefault()} onDrop={handleFileDrop}><input type="file" accept={ACCEPTED_REPORT_TYPES} onChange={handleFileChange} /><FileText size={24} /><strong>{selectedFile ? selectedFile.name : 'Choose a file'}</strong><span className={uploadError ? 'upload-error' : ''} role={uploadError ? 'alert' : undefined}>{uploadError || 'PDF, JPG, or PNG up to 20 MB'}</span></label><button className="upload-submit" type="button" onClick={handleUpload}>{uploadComplete ? 'Added to reports' : 'Add report'}</button><small className="modal-note"><ShieldCheck size={14} /> Demo mode: files are not sent anywhere yet.</small></div></div>}
   </div>
 }
 export default App

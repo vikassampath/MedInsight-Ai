@@ -1,4 +1,15 @@
 export const MAX_UPLOAD_SIZE_BYTES = 20 * 1024 * 1024
+export const ACCEPTED_REPORT_TYPES = '.pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png'
+
+const acceptedReportExtensions = new Set(['.pdf', '.jpg', '.jpeg', '.png'])
+const acceptedReportMimeTypes = new Set(['application/pdf', 'image/jpeg', 'image/png'])
+
+export function isSupportedReportFile(file: Pick<File, 'name' | 'size' | 'type'>): boolean {
+  const extension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase()
+  return file.size > 0
+    && file.size <= MAX_UPLOAD_SIZE_BYTES
+    && (acceptedReportMimeTypes.has(file.type.toLowerCase()) || acceptedReportExtensions.has(extension))
+}
 
 export const sectionDetails: Record<string, { title: string; description: string }> = {
   Reports: { title: 'Your reports', description: 'Review uploaded reports and their analysis status.' },
