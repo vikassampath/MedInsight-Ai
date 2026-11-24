@@ -10,7 +10,7 @@ MedInsight AI is a full-stack starter for an intelligent medical report and imag
 - Clear separation between educational context and diagnosis
 - Responsive layout for desktop and narrow screens
 
-The displayed measurements and assistant answer are demo data. No uploaded file is transmitted or analyzed yet.
+All dashboard measurements, trends, activity, and report rows are illustrative demo data, not patient records. The dashboard does not make clinical interpretations. The assistant provides only a small set of linked sample explanations. Report files are checked in the browser but are not uploaded, saved, or analyzed.
 
 ![Continuous integration](https://github.com/vikassampath/MedInsight-Ai/actions/workflows/ci.yml/badge.svg)
 
