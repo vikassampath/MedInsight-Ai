@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatDisplayDate, getAssistantAnswer, getGreeting, isSupportedReportFile, MAX_UPLOAD_SIZE_BYTES, sectionDetails } from './appLogic'
+import { formatDisplayDate, getAssistantAnswer, getAssistantSource, getGreeting, isSupportedReportFile, MAX_UPLOAD_SIZE_BYTES, sectionDetails } from './appLogic'
 
 describe('app logic', () => {
   it('formats a deterministic display date', () => {
@@ -15,7 +15,10 @@ describe('app logic', () => {
   it('returns targeted educational answers', () => {
     expect(getAssistantAnswer('What is LDL cholesterol?')).toContain('LDL')
     expect(getAssistantAnswer('What does hemoglobin mean?')).toContain('Hemoglobin')
-    expect(getAssistantAnswer('What is a scan?')).toContain('educational context')
+    expect(getAssistantAnswer('What is a scan?')).toContain('sample explanations')
+    expect(getAssistantSource('What is LDL cholesterol?')?.url).toContain('medlineplus.gov')
+    expect(getAssistantSource('What does hemoglobin mean?')?.url).toContain('medlineplus.gov')
+    expect(getAssistantSource('What is a scan?')).toBeNull()
   })
 
   it('keeps navigation content and upload limits centralized', () => {
@@ -26,6 +29,7 @@ describe('app logic', () => {
   it('only accepts non-empty PDF, JPG, and PNG files within the size limit', () => {
     expect(isSupportedReportFile({ name: 'lab.PDF', type: 'application/pdf', size: 100 })).toBe(true)
     expect(isSupportedReportFile({ name: 'photo.jpg', type: 'image/jpeg', size: 100 })).toBe(true)
+    expect(isSupportedReportFile({ name: 'report.pdf', type: 'image/png', size: 100 })).toBe(false)
     expect(isSupportedReportFile({ name: 'notes.txt', type: 'text/plain', size: 100 })).toBe(false)
     expect(isSupportedReportFile({ name: 'empty.png', type: 'image/png', size: 0 })).toBe(false)
     expect(isSupportedReportFile({ name: 'large.png', type: 'image/png', size: MAX_UPLOAD_SIZE_BYTES + 1 })).toBe(false)
